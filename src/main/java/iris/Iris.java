@@ -14,19 +14,15 @@ import java.util.stream.Stream;
 public class Iris {
     private Classifier classModel;
     private Instances dataModel;
-//    private String classModelFile = "/iris.model";
     private String classModelFile = "classifiers/irisesNBClassifier.model";
-//    private String classModelFile = "C:\\Projects\\_PVK\\magister-2019\\classifiers\\textTrain.model";
 
     /**
-     *  Class constructor.
+     *  Class constructor
      */
     public Iris() throws Exception {
         Stream<String> stream = Files.lines(Paths.get(classModelFile));
         InputStream classModelStream = new FileInputStream(classModelFile);
-//        InputStream classModelStream = getClass().getResourceAsStream(classModelFile);
         classModel = (Classifier) SerializationHelper.read(classModelStream);
-//        SMO svm = .SerializationHelper.read("files/textTrain.model");
     }
 
     public void close() {
@@ -35,9 +31,6 @@ public class Iris {
     }
 
     /**
-     * Evaluate the model on the data provided by @param measures.
-     * This returns a string with the species name.
-     *
      * @param measures object with petal and sepal measurements
      * @return string with the species name
      * @throws Exception
@@ -67,8 +60,7 @@ public class Iris {
         dataModel.add(new DenseInstance(1, values));
         dataModel.instance(0).setClassMissing();
 
-        //  Find the class with the highest estimated likelihood
-
+        //  Find the class
         double cl[] = classModel.distributionForInstance(dataModel.instance(0));
         for(i = 0; i < cl.length; i++)
             if(cl[i] > cl[maxIndex])
@@ -76,6 +68,4 @@ public class Iris {
 
         return dataModel.classAttribute().value(maxIndex);
     }
-
-
 }
