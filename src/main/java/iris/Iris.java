@@ -4,12 +4,10 @@ import weka.classifiers.Classifier;
 import weka.core.*;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.stream.Stream;
 
 public class Iris {
     private Classifier classModel;
@@ -19,10 +17,15 @@ public class Iris {
     /**
      *  Class constructor
      */
-    public Iris() throws Exception {
-        Stream<String> stream = Files.lines(Paths.get(classModelFile));
-        InputStream classModelStream = new FileInputStream(classModelFile);
-        classModel = (Classifier) SerializationHelper.read(classModelStream);
+    public Iris() {
+        try {
+            InputStream classModelStream = new FileInputStream(classModelFile);
+            classModel = (Classifier) SerializationHelper.read(classModelStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void close() {
@@ -35,7 +38,7 @@ public class Iris {
      * @return string with the species name
      * @throws Exception
      */
-    public String classifySpecies(Map<String, String> measures) throws Exception {
+    public String classifySpecies(Map<String, String> measures) {
         ArrayList dataClasses = new ArrayList();
         ArrayList dataAttribs = new ArrayList();
         Attribute species;
@@ -61,7 +64,12 @@ public class Iris {
         dataModel.instance(0).setClassMissing();
 
         //  Find the class
-        double cl[] = classModel.distributionForInstance(dataModel.instance(0));
+        double cl[] = new double[0];
+        try {
+            cl = classModel.distributionForInstance(dataModel.instance(0));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         for(i = 0; i < cl.length; i++)
             if(cl[i] > cl[maxIndex])
                 maxIndex = i;
